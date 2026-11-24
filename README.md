@@ -12,6 +12,22 @@ Use two Windows x64 computers on the same trusted local network. Install Python 
 
 ## Install and pair
 
+### Check Python on both computers
+
+Run this version check in PowerShell on both computers.
+
+```powershell
+py -3.13 --version
+```
+
+The examples use Python 3.13, so this should print `Python 3.13.x`. If you have a later supported version, substitute its version number in the check and the `py` commands below. If `py` is unavailable, try `python --version`. When it reports Python 3.13 or later, use `python` in place of `py -3.13` below.
+
+If neither command reports a supported version, or the only result is a Microsoft Store prompt, install 64-bit Python for Windows, open a new PowerShell window, and check again. [Python for Windows](https://www.python.org/downloads/windows/)
+
+Create the virtual environment and install the package from a folder you own, using the same Windows account that will run ExecLattice.
+
+### Set up the controller and worker
+
 On the controller, open PowerShell in the preview source folder. Create a virtual environment and install the controller with the optional MCP adapter.
 
 ```powershell
@@ -104,6 +120,17 @@ The single-machine check uses separate controller, worker and MCP processes over
 $env:PYTHONPATH = (Resolve-Path .\src).Path
 .\.venv\Scripts\python.exe .\scripts\verify-lan.py --scratch-root $env:TEMP
 ```
+
+## Two-computer validation for v0.54.0.dev8
+
+On 2026-11-25, a maintainer installed the [published v0.54.0.dev8 wheel](https://github.com/ZhouzJAY/ExecLattice/releases/tag/v0.54.0.dev8) on two Windows x64 computers and verified its SHA-256 on both. The controller and worker ran under standard Windows accounts on a trusted LAN. The interruption tests cut only the test HTTPS connection.
+
+| Scenario | Observed result |
+| --- | --- |
+| Pair and read a file | One-time HTTPS pairing succeeded. The controller read the 130-byte public sample from the worker and verified its SHA-256 against `examples/hello.txt`. |
+| Connection interrupted for about 12 seconds | The task finished during the interruption. After reconnecting, the controller retrieved the original successful result with exit code 0. The task ran once. |
+| Connection interrupted for about 25 seconds | The worker stopped safely. The original result remained unconfirmed, and the controller retrieved evidence of the stop after reconnecting. The task ran once. |
+| Revoke the worker | An existing receipt remained readable, and a new task request returned HTTP 404. |
 
 ## Use the Python SDK
 
