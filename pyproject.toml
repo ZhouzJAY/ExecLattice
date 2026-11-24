@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "execlattice-lan-preview"
+version = "0.54.0.dev8"
+description = "ExecLattice LAN execution core preview"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{name = "LarkStencil"}]
+dependencies = [
+  "fastapi==0.156.8",
+  "uvicorn==0.54.0",
+  "httpx==0.28.1",
+  "pydantic==2.14.1",
+  "cryptography==50.0.2",
+]
+
+[project.optional-dependencies]
+mcp = ["mcp==2.3.0"]
+build = ["pyinstaller==6.22.3"]
+test = ["pytest==9.1.1"]
+
+[project.scripts]
+execlattice = "execlattice.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

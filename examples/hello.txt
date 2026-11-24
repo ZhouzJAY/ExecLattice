@@ -1,0 +1,2 @@
+Hello from an explicitly authorized ExecLattice workspace.
+This file is safe to use in the read-only quick-start demonstration.
